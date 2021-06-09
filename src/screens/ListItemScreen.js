@@ -51,10 +51,9 @@ const ListItemScreen = () => {
 
         <View>
             <FlatList
-                data={items}
+                data={items.reverse()}
                 keyExtractor={(item) => item.contactNumber}
                 renderItem={({ item }) => renderIntem(item)}
-                inverted={false}
                 onRefresh={() => {
                     setLoading(true)
                     getDetails()

@@ -3,7 +3,6 @@
 /* eslint-disable semi */
 /* eslint-disable keyword-spacing */
 /* eslint-disable prettier/prettier */
-
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, Alert, SafeAreaView, ScrollView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
@@ -11,6 +10,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import messaging from '@react-native-firebase/messaging';
 
 const CreateAdScreen = () => {
     const [name, setName] = useState('');
@@ -20,7 +20,7 @@ const CreateAdScreen = () => {
     const [age, setAge] = useState('');
     const [contactName, setContactName] = useState('');
     const [contactNumber, setContactNumber] = useState('');
-    const [image,setImage] = useState('');
+    const [image, setImage] = useState('');
     const postData = async () => {
         try {
             await firestore().collection('ads')
@@ -36,24 +36,34 @@ const CreateAdScreen = () => {
                     uid: auth().currentUser.uid,
                 })
             Alert.alert('posted your Ad!')
-
         }
         catch (err) {
             Alert.alert('Something went wrong. Try again!')
         }
     }
+
+
+    async function requestUserPermission() {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (enabled) {
+            console.log('Authorization status:', authStatus);
+        }
+    }
     const accessCamera = () => {
-        launchCamera({ quality: 0.5 }, (fileobj) => {
+        launchImageLibrary({ quality: 0.5 }, (fileobj) => {
             // console.log(fileobj)
             const uploadTask = storage().ref().child(`/items/${Date.now()}`).putFile(fileobj.uri)
             uploadTask.on('state_changed',
                 (snapshot) => {
-                
+
                     var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    if(progress === 100){
+                    if (progress === 100) {
                         alert('uploaded')
                     }
-                   
                 },
                 (error) => {
                     alert('Somthing went wrong')
@@ -71,9 +81,7 @@ const CreateAdScreen = () => {
     return (
         <SafeAreaView>
             <ScrollView >
-
                 <KeyboardAvoidingView behavior="position" style={styles.container}>
-
                     <Text style={styles.textTag}>Create a Post</Text>
                     <TextInput
                         style={styles.textInpStyle}
