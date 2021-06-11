@@ -2,6 +2,7 @@ var admin = require('firebase-admin');
 const express = require('express')
 const app = express()
 var serviceAccount = require("./salvadorreactnative-firebase-adminsdk-pu5fu-4c567df9e6.json");
+const port=3000
 
 app.use(express.json())
 
@@ -27,6 +28,6 @@ app.post('/send-notification', (req, res) => {
 
 })
 
-app.listen(3000,()=>{
+app.listen(process.env.PORT || port,()=>{
     console.log('Node JS server is running')
 })
