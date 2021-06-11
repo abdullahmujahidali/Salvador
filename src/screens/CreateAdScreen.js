@@ -27,7 +27,7 @@ const CreateAdScreen = () => {
                 return docSnap.data().token
             })
             console.log(userDeviceToken)
-            fetch('https://9130020d80cb.ngrok.io/send-notification',{
+            fetch('https://frozen-sierra-51012.herokuapp.com/send-notification',{
                 method: 'post',
                 headers:{
                     'Content-Type': 'application/json'

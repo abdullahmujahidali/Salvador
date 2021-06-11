@@ -10,6 +10,8 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
 
+app.get('/',(req,res)=>res.send('hello world'));
+
 app.post('/send-notification', (req, res) => {
     console.log(req.body)
 
