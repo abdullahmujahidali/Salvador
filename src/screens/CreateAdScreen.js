@@ -11,7 +11,6 @@ import auth from '@react-native-firebase/auth';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import messaging from '@react-native-firebase/messaging';
-
 const CreateAdScreen = () => {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
@@ -21,6 +20,24 @@ const CreateAdScreen = () => {
     const [contactName, setContactName] = useState('');
     const [contactNumber, setContactNumber] = useState('');
     const [image, setImage] = useState('');
+
+    const sendNotification = () => {
+        firestore().collection('usertoken').get().then(querySnap => {
+            const userDeviceToken = querySnap.docs.map(docSnap => {
+                return docSnap.data().token
+            })
+            console.log(userDeviceToken)
+            fetch('https://9130020d80cb.ngrok.io/send-notification',{
+                method: 'post',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({
+                    tokens: userDeviceToken
+                })
+            })
+        })
+    }
     const postData = async () => {
         try {
             await firestore().collection('ads')
@@ -40,6 +57,7 @@ const CreateAdScreen = () => {
         catch (err) {
             Alert.alert('Something went wrong. Try again!')
         }
+        sendNotification()
     }
 
 
@@ -149,13 +167,13 @@ const CreateAdScreen = () => {
                         onPress={() => accessCamera()}
                     >
                         UPLOAD IMAGE
-        </Button>
+                    </Button>
                     <Button disabled={image ? false : true} style={styles.btnStyle}
                         mode="contained"
                         onPress={() => postData()}
                     >
                         SUBMIT POST
-        </Button>
+                    </Button>
 
                 </KeyboardAvoidingView>
             </ScrollView>

@@ -7,6 +7,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView,Alert } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 export default function SignUpScreen(props) {
     const [email, setEmail] = useState('');
@@ -20,6 +22,11 @@ export default function SignUpScreen(props) {
         }
         try{
             result = await auth().createUserWithEmailAndPassword(email,password)
+                messaging().getToken().then(token=>{
+                  firestore().collection('usertoken').add({
+                      token:token
+                  })
+                })
             console.log(result.user);
         }
         catch(err){
