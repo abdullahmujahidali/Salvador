@@ -31,6 +31,8 @@ import auth from '@react-native-firebase/auth';
 
 
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import messaging from '@react-native-firebase/messaging';
+
 
 const theme = {
   ...DefaultTheme,
@@ -113,6 +115,11 @@ const Navigation = () => {
   )
 };
 const App = () => {
+  useEffect(()=>{
+    messaging().getToken().then(token=>{
+      console.log(token)
+    })
+  },[])
   return (
     <>
       <PaperProvider theme={theme}>
